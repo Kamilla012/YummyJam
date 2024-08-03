@@ -16,6 +16,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,6 +38,6 @@ app.UseCors("AllowFrontend"); // Użyj polityki CORS
 app.UseAuthorization();
 
 app.MapRazorPages();
-app.MapControllers(); // Mapowanie kontrolerów API
+app.MapControllers(); 
 
 app.Run();

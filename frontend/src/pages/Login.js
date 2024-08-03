@@ -2,12 +2,13 @@
 // import React from 'react';
 import StrawberryLogo from "../images/strawberry.png"
 import { Link } from 'react-router-dom';
+// import Registry from '../pages/'
 
 
 const Login = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-md">
+        <div className="lg:w-[30%] p-10 bg-white rounded-lg shadow-md">
         
             <div className="flex items-center mb-4">
                 <h1 className="text-4xl font-bold  text-center text-primaryDarkPink">Login</h1>
@@ -46,7 +47,7 @@ const Login = () => {
               Login
             </button>
           </form>
-          <p>You don't have an account yet? <Link to="../pages/Registration">Create it!</Link></p>
+          <p className="mt-4 text-[16px]">You don't have an account yet? <Link to="../pages/Registration" className="text-strawberryRed font-bold">Create it!</Link></p>
         </div>
       </div>
     );

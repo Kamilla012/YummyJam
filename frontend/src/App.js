@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Login from './pages/Login'
+import Registration from './pages/Registration'
 import './index.css';
 const App = () => {
     // const [data, setData] = useState(null);
@@ -16,7 +17,8 @@ const App = () => {
         <div>
            <BrowserRouter>
                 <Routes>
-                    <Route index element={<Login />}/>
+                    <Route path='/' index element={<Login />}/>
+                    <Route path="/pages/Registration" element={<Registration />} />
                 </Routes>
             </BrowserRouter>
             {/* <h1>Data from API:</h1> */}
