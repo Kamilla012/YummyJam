@@ -1,43 +1,31 @@
-var builder = WebApplication.CreateBuilder(args);
+using System;
+using System.Threading.Tasks;
+using Supabase;
+using DotNetEnv;
 
-// Add services to the container.
-builder.Services.AddRazorPages(); // Jeśli używasz Razor Pages, pozostaw to
-builder.Services.AddControllers(); // Dodaj wsparcie dla kontrolerów API
-
-// Configure CORS
-builder.Services.AddCors(options =>
+class Program
 {
-    options.AddPolicy("AllowFrontend",
-        builder =>
+    static async Task Main(string[] args)
+    {
+        Env.Load();
+    
+        var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
+        var key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
+
+        // Ustaw opcje Supabase
+        var options = new Supabase.SupabaseOptions
         {
-            builder.WithOrigins("http://localhost:3000") // Adres Twojej aplikacji frontendowej
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
+            AutoConnectRealtime = true
+        };
 
+        // Utwórz klienta Supabase
+        var supabase = new Supabase.Client(url, key, options);
 
+        // Zainicjalizuj połączenie
+        await supabase.InitializeAsync();
 
+        Console.WriteLine("Połączenie z Supabase zostało nawiązane.");
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
+        // Tutaj możesz dodawać dalsze operacje, np. zapytania do bazy danych Supabase
+    }
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseCors("AllowFrontend"); // Użyj polityki CORS
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-app.MapControllers(); 
-
-app.Run();
