@@ -1,22 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
+using backend.Data;
+using backend.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
-namespace YourNamespace.Controllers
+namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetUsers()
+        private readonly ApplicationDbContext _context;
+
+        public UsersController(ApplicationDbContext context)
         {
-            var users = new[] { new { Id = 1, Name = "John Doe" } };
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync();
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUser(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = new { Id = id, Name = "John Doe" };
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             return Ok(user);
         }
     }
