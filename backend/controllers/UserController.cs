@@ -4,10 +4,10 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class PingController : ControllerBase
     {
-        [HttpGet("/login")]
-        public IActionResult User()
+        [HttpGet("/")]
+        public IActionResult Ping()
         {
             return Ok(new { message = "API is up and running!!!!" });
         }

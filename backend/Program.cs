@@ -8,11 +8,17 @@ using backend.Models;
 using Npgsql;
 using System;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using backend;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Odczytaj dane połączenia z pliku konfiguracyjnego
-var connectionString = "Host=aws-0-eu-central-1.pooler.supabase.com;Database=postgres;Username=postgres.mocsaghwlpcsjdrfjkqx;Password=KWAkwaKWA555!";
+DotNetEnv.Env.Load();
+var  connectionString= Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+
+
+
 
 // Dodaj DbContext i skonfiguruj używanie PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

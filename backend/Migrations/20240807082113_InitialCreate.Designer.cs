@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace YummyJam.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240807080339_InitialCreate")]
+    [Migration("20240807082113_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
