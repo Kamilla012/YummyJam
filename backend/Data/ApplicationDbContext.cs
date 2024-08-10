@@ -1,30 +1,37 @@
 using Microsoft.EntityFrameworkCore;
-using backend.Models; // Importuj przestrzeń nazw zawierającą model User
+using backend.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity; // Importuj przestrzeń nazw zawierającą model User
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<AppUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions dbContextOptions)
+        : base(dbContextOptions)
     {
     }
 
-    // Definiowanie DbSet dla modeli
+
     public DbSet<User> Users { get; set; }
-
-    // Opcjonalnie: konfiguracja modelu przy użyciu Fluent API
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
-        
-        // Konfiguracje dla modelu User (opcjonalne)
-        modelBuilder.Entity<User>(entity =>
+      base.OnModelCreating(builder);
+      List<IdentityRole> roles = new  List<IdentityRole>
+      {
+        new IdentityRole
         {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Fname).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Lname).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).IsRequired();
-        });
+            Name = "Admin",
+            NormalizedName = "ADMIN"
+        },
+        new IdentityRole
+        {
+            Name = "User",
+            NormalizedName = "USER"
+        },
+      };
+
+    builder.Entity<IdentityRole>().HasData(roles);
+
     }
+
+  
 }
