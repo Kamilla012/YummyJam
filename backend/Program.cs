@@ -13,6 +13,8 @@ using backend;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using backend.Interfaces;
+using backend.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +66,9 @@ builder.Services.AddAuthentication(options => {
         )
     };
 });
+
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 
 var app = builder.Build();
