@@ -1,69 +1,50 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using backend.Dtos;
-using backend.Dtos.Account;
-using backend.Interfaces;
-using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using backend.Models;
 
-namespace backend.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class AccountController : ControllerBase
 {
-    [Route("api/account")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    private readonly UserManager<AppUser> _userManager;
+    public AccountController(UserManager<AppUser> userManager)
     {
-        private readonly UserManager<AppUser> _userManager; 
-        private readonly ITokenService _tokenService; 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService){
-            _userManager = userManager; 
-            _tokenService = tokenService;
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegiserDto registerDto)
-        {
-            try 
-            {
-                if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-                var AppUser = new AppUser
-                {
-                    UserName = registerDto.Username,
-                    Email = registerDto.Email
-                };
-
-                var createdUser = await _userManager.CreateAsync(AppUser, registerDto.Password);
-                if(createdUser.Succeeded)
-                {
-                    var roleResult = await _userManager.AddToRoleAsync(AppUser, "User");
-                    if(roleResult.Succeeded)
-                    {
-                        return Ok(
-                            new NewUserDto
-                            {
-                                UserName = AppUser.UserName,
-                                Email = AppUser.Email,
-                                Token = _tokenService.CreateToken(AppUser) 
-                            }
-                        );
-                    }else
-                    {
-                        return StatusCode(500, roleResult.Errors);
-                    }
-                }
-                else{
-                    return StatusCode(500, createdUser.Errors);
-                }
-
-            } catch (Exception e)
-            {
-                return StatusCode(500, e);
-            }
-        }
-        
+        _userManager = userManager;
     }
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    {
+        if(!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var user = new AppUser
+        {
+            UserName = model.Username,
+            Email = model.Email,
+            Fname = model.FirstName,
+            Lname = model.LastName
+        };
+        var result = await _userManager.CreateAsync(user, model.Password);
+         if (result.Succeeded)
+        {
+            return Ok(new { message = "Registration successful" });
+        }
+         foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
+        return BadRequest(ModelState);
+    }
+}
+
+public class RegisterModel
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

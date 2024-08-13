@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YummyJam")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d4980ac908387ae05ba9c00cfef245af878a02a7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34d15e259c3608d162f9806852f804473ec6a332")]
 [assembly: System.Reflection.AssemblyProductAttribute("YummyJam")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YummyJam")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

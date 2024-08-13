@@ -3,9 +3,39 @@
 import StrawberryLogo from "../images/strawberry.png"
 import { Link } from 'react-router-dom';
 // import Registry from '../pages/'
+import API_BASE_URL from "../config";
+import { useState } from "react";
+
 
 
 const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("")
+
+  const handleLogin = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/account/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert(data.message);
+        } else {
+            const errorData = await response.json();
+            setError(errorData);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        setError("An error occurred during login.");
+    }
+};
+  
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="lg:w-[30%] p-10 bg-white rounded-lg shadow-md">
@@ -22,6 +52,8 @@ const Login = () => {
                 type="text"
                 id="username"
                 name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
                 required
@@ -34,6 +66,8 @@ const Login = () => {
                 type="password"
                 id="password"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
                 required
@@ -42,6 +76,7 @@ const Login = () => {
   
             <button
               type="submit"
+              onClick={handleLogin}
               className="w-full px-4 py-2 bg-primaryDarkPink text-white font-semibold rounded-lg shadow-md hover:bg-primaryLightPink focus:outline-none focus:ring-2 focus:ring-primaryLightPink focus:ring-opacity-50"
             >
               Login
