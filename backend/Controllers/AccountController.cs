@@ -17,7 +17,12 @@ public class AccountController : ControllerBase
     {
         if(!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(new {errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+        }
+        var existingUser = await _userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null)
+        {
+            return BadRequest(new {errors = new List<string> {"Email is already in use." } });
         }
         var user = new AppUser
         {
@@ -26,18 +31,18 @@ public class AccountController : ControllerBase
             Fname = model.Fname,
             Lname = model.Lname
         };
+
+
         var result = await _userManager.CreateAsync(user, model.Password);
         Console.WriteLine(result);
-         if (result.Succeeded)
-        {
-            return Ok(new { message = "Registration successful" });
-        }
-         foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
 
-        return BadRequest(ModelState);
+    if (result.Succeeded)
+    {
+        return Ok(new { message = "Registration successful" });
     }
+
+    
+    return BadRequest(new { errors = result.Errors.Select(e => e.Description).ToList() });
+}
 }
 

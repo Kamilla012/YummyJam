@@ -6,15 +6,14 @@ import React, { useState } from "react";
 import API_BASE_URL from "../config";
 
 const Registration = () => {
-  // const [Fname, setFname] = useState("");
-  // const [Lname, setLname] = useState("");
-  // const [username, setUsername] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
-  // const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState({Fname: '', Lname: '', username: '', email: '', password: ''});
+  const [formData, setFormData] = useState({
+    Fname: '', 
+    Lname: '', 
+    username: '', 
+    email: '',
+    password: ''});
+    const [successMessage, setSuccessMessage] = useState('');
   const [errors, setErrors] = useState({});
 
   const validate = () => {
@@ -31,8 +30,13 @@ const Registration = () => {
     if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
         newErrors.email = "Email is invalid";
     }
-    if (!formData.password) {
-        newErrors.password = "Password is required";
+    if (!formData.password || !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&^])[A-Za-z\d@.#$!%*?&]{8,15}$/.test(formData.password)) {
+        newErrors.password = `Password is invalid. </br>
+        At least one lowercase alphabet, i.e. [az] </br> 
+        At least one uppercase alphabet, i.e. [AZ]. </br>
+        At least one digit, i.e. [0-9] <br>
+        At least one special character, i.e. ['@', '$', '.', '#', '!', '%', '*', '?', '&', '^'] <br>
+        In addition, the total length must be within the range [8-15] <br>`;
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -40,6 +44,7 @@ const Registration = () => {
 
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     e.preventDefault();
     if (!validate()) {
       return; 
@@ -54,11 +59,20 @@ const Registration = () => {
         },
         body: JSON.stringify(formData)
       });
-      if (!response.ok){
-        throw new Error("Network response was not ok");
-      }
+
       const result = await response.json();
+
+
+      if (!response.ok){
+        const data = await response.json();
+        // throw new Error("Network response was not ok");
+        setErrors({server: data.error || ["An error occurred"] });
+        return;
+      }
+     
       console.log('Success:', result);
+
+      setSuccessMessage(result.message);
 
       // Czyścimy formularz po pomyślnym wysłaniu
       setFormData({
@@ -72,6 +86,7 @@ const Registration = () => {
     }
     catch(error){
       console.error('There was a problem with the fetch operation:', error);
+      setErrors({ server: ["There was a problem with the fetch operation."] });
     }
   }
     return (
@@ -94,9 +109,9 @@ const Registration = () => {
                 onChange={(e) => setFormData({...formData, Fname: e.target.value})}
                 placeholder="Enter your first name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
-                required
+              
               />
-              {errors.data && <span>{errors.data}</span>}
+              {errors.Fname && <span className="text-primaryDarkPink py-5 font-bold">{errors.Fname}</span>}
             </div>
 
 
@@ -110,10 +125,10 @@ const Registration = () => {
                 onChange={(e) => setFormData({...formData, Lname: e.target.value})}
                 placeholder="Enter your Last Name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
-                required
+                
                 
               />
-                {errors.data && <span>{errors.data}</span>}
+                {errors.Lname && <span className="text-primaryDarkPink py-5 font-bold">{errors.Lname}</span>}
             </div>
         
             <div className="mb-3">
@@ -126,9 +141,9 @@ const Registration = () => {
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
                 placeholder="Enter your username"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
-                required
+             
               />
-                {errors.data && <span>{errors.data}</span>}
+                {errors.username && <span className="text-primaryDarkPink py-5 font-bold">{errors.username}</span>}
             </div>
             <div className="mb-3">
               <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-2">Email</label>
@@ -140,9 +155,9 @@ const Registration = () => {
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 placeholder="Enter your email"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
-                required
+            
               />
-               {errors.email && <span>{errors.email}</span>}
+               {errors.email && <span className="text-primaryDarkPink py-5 font-bold">{errors.email}</span>}
             </div>
 
             <div className="mb-3">
@@ -155,9 +170,9 @@ const Registration = () => {
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 placeholder="Enter your password"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDarkPink focus:border-primaryDarkPink"
-                required
+           
               />
-               {errors.data && <span>{errors.data}</span>}
+               {errors.password && <span className="text-primaryDarkPink py-5 font-bold">{errors.password}</span>}
             </div>
 
 
@@ -170,6 +185,26 @@ const Registration = () => {
             >
               Sign up
             </button>
+
+
+            {errors.server && (
+        <div>
+          <h4>Server Errors:</h4>
+          <ul>
+            {errors.server.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {successMessage && (
+        <div>
+          <h4>{successMessage}</h4>
+        </div>
+      )}
+
+
           </form>
           <p className="mt-4 text-[16px]">Already have an account?  <Link to="/" className="text-berryBlue font-bold">Log in there!</Link></p>
         </div>
