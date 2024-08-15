@@ -9,7 +9,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
     }
 
-
+        // public DbSet<RegisterModel> RegisterModels {get; set;}
 
   
 }

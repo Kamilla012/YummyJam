@@ -23,10 +23,11 @@ public class AccountController : ControllerBase
         {
             UserName = model.Username,
             Email = model.Email,
-            Fname = model.FirstName,
-            Lname = model.LastName
+            Fname = model.Fname,
+            Lname = model.Lname
         };
         var result = await _userManager.CreateAsync(user, model.Password);
+        Console.WriteLine(result);
          if (result.Succeeded)
         {
             return Ok(new { message = "Registration successful" });
@@ -40,11 +41,3 @@ public class AccountController : ControllerBase
     }
 }
 
-public class RegisterModel
-{
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-}
